@@ -4,7 +4,8 @@ import java.util.List;
 class CityDevelopment {
     private Heap<Building> minHeap;
     private RedBlackTree<Integer, Building> redBlackTree;
-    private LinkedList<Plan> plans;
+    private LinkedList<Plan> insertPlans;
+    private LinkedList<Plan> printPlans;
     private Building currentBuilding;
     private int globalTimeCounter = -1;
     private int currentBuildingDevelopment = 5;
@@ -16,16 +17,21 @@ class CityDevelopment {
     CityDevelopment() {
         minHeap = new Heap<>(new ExecutionTimeComparator());
         redBlackTree = new RedBlackTree<>((a,b)-> a-b);
-        plans = new LinkedList<>();
+        insertPlans = new LinkedList<>();
+        printPlans = new LinkedList<>();
     }
 
-    void addPlan(Plan plan) {
-        plans.add(plan);
+    void addInsertPlan(Plan plan) {
+        insertPlans.add(plan);
+    }
+
+    void addPrintPlan(Plan plan) {
+        printPlans.add(plan);
     }
 
     void incrementCounter() {
-        doAction();
-        globalTimeCounter++;
+        ++globalTimeCounter;
+        addInsertPlanToCurrentBuilding();
         if(currentBuilding != null && currentBuildingDevelopment == 5) {
             currentBuildingDevelopment = 0;
             minHeap.addElement(currentBuilding);
@@ -38,32 +44,39 @@ class CityDevelopment {
         if(currentBuilding != null) {
             currentBuildingDevelopment++;
             currentBuilding.setExecutedTime(currentBuilding.getExecutedTime()+1);
-            if(currentBuilding.getExecutedTime() == currentBuilding.getTotalTime()) {
-                System.out.println("("+ currentBuilding.getBuildingNumber() + ", " + globalTimeCounter + ")");
-                redBlackTree.deleteElement(currentBuilding.getBuildingNumber());
-                currentBuilding = null;
-            }
-
+        }
+        printPlansToOuputFile();
+        if(currentBuilding != null && currentBuilding.getExecutedTime() == currentBuilding.getTotalTime()) {
+            System.out.println("("+ currentBuilding.getBuildingNumber() + "," + (globalTimeCounter+1) + ")");
+            redBlackTree.deleteElement(currentBuilding.getBuildingNumber());
+            currentBuilding = null;
         }
     }
 
-    void doAction() {
-        if(plans.size() > 0) {
-            Plan firstPlan = plans.peekFirst();
+    void addInsertPlanToCurrentBuilding() {
+        if(insertPlans.size() > 0) {
+            Plan firstPlan = insertPlans.peekFirst();
             if(firstPlan.getStartingTime() == globalTimeCounter) {
+                addNewBuilding((InsertPlan) insertPlans.pollFirst());
+                addInsertPlanToCurrentBuilding();
+            }
+        }
+    }
+
+    void printPlansToOuputFile() {
+        // System.out.println("printPlansToOuputFile called" + globalTimeCounter);
+        if(printPlans.size() > 0) {
+            Plan firstPlan = printPlans.peekFirst();
+            if (firstPlan.getStartingTime() == globalTimeCounter) {
                 switch (firstPlan.getPlanType()) {
-                    case INSERT:
-                        addNewBuilding((InsertPlan) plans.pollFirst());
-                        break;
                     case PRINT:
-                        printBuildingTuple((PrintPlan) plans.pollFirst());
+                        printBuildingTuple((PrintPlan) printPlans.pollFirst());
                         break;
                     case PRINT_RANGE:
-                        printBuildingRangeTuples((PrintRangePlan) plans.pollFirst());
+                        printBuildingRangeTuples((PrintRangePlan) printPlans.pollFirst());
                         break;
-
                 }
-                doAction();
+                printPlansToOuputFile();
             }
         }
     }
@@ -71,7 +84,10 @@ class CityDevelopment {
     private boolean addNewBuilding(InsertPlan plan) {
         Building building = new Building(plan.getBuildingNumber(), plan.getTotalTime());
         boolean added = redBlackTree.addElement(building.getBuildingNumber(), building);
-        if(!added) return false;
+        if(!added) {
+            System.out.println("Not added");
+            return false;
+        }
         minHeap.addElement(building);
         return true;
     }
@@ -79,7 +95,11 @@ class CityDevelopment {
     private void printBuildingTuple(PrintPlan printPlan) {
         Integer buildingNumber = printPlan.getBuildingNumber();
         Building building = redBlackTree.searchElement(buildingNumber);
-        System.out.println("("+ building.getBuildingNumber() + ", " + building.getExecutedTime() + ", " + building.getTotalTime() + ")");
+        if(building == null) {
+            System.out.println("(0,0,0)");
+        } else {
+            System.out.println("("+ building.getBuildingNumber() + "," + building.getExecutedTime() + "," + building.getTotalTime() + ")");
+        }
     }
 
     private void printBuildingRangeTuples(PrintRangePlan printRangePlan) {
@@ -87,17 +107,21 @@ class CityDevelopment {
         Integer buildingNumber2 = printRangePlan.getBuildingNumber2();
 
         List<Building> buildings = redBlackTree.getElementsBetweenRange(buildingNumber1, buildingNumber2);
-        for(int i=0; i < buildings.size(); i++) {
-            Building building = buildings.get(i);
-            System.out.print("("+ building.getBuildingNumber() + ", " + building.getExecutedTime() + ", " + building.getTotalTime() + ")");
-            if(i < buildings.size()-1) {
-                System.out.print(",");
+        if(buildings.size() > 0) {
+            for(int i=0; i < buildings.size(); i++) {
+                Building building = buildings.get(i);
+                System.out.print("("+ building.getBuildingNumber() + "," + building.getExecutedTime() + "," + building.getTotalTime() + ")");
+                if(i < buildings.size()-1) {
+                    System.out.print(",");
+                }
             }
+            System.out.println();
+        } else {
+            System.out.println("(0,0,0)");
         }
-        System.out.println();
     }
 
     boolean developmentDone() {
-        return plans.size() == 0 && minHeap.length == 0 && currentBuilding == null;
+            return insertPlans.size() == 0 && printPlans.size() == 0 && minHeap.length == 0 && redBlackTree.head == null && currentBuilding == null;
     }
 }

@@ -1,7 +1,7 @@
 import java.util.*;
 
 class RedBlackTree<K, V> {
-    private RedBlackTreeNode<K, V> head;
+    RedBlackTreeNode<K, V> head;
     private Comparator<? super K> comparator;
 
     RedBlackTree(Comparator<? super K> comparator) {
@@ -10,6 +10,7 @@ class RedBlackTree<K, V> {
 
     boolean addElement(K key, V value) {
         RedBlackTreeNode<K, V> node = new RedBlackTreeNode<>(key, value);
+
 
         if(head == null) {
             node.setNodeColor(NodeColor.BLACK);
@@ -134,7 +135,11 @@ class RedBlackTree<K, V> {
     }
 
     void printInOrder() {
-        printInOrder(head);
+        if(this.head == null) {
+            System.out.print("Head is null");
+        }
+        printInOrder(this.head);
+        System.out.println();
     }
 
     void printInOrder(RedBlackTreeNode<K, V> head) {
@@ -180,7 +185,7 @@ class RedBlackTree<K, V> {
         if(isRedNode(nodeToBeDeleted) || isRedNode(childOfDeletedNode)) {
             if(childOfDeletedNode != null) childOfDeletedNode.nodeColor = NodeColor.BLACK;
         } else {
-            printInOrder(head);
+            // printInOrder(head);
             reBalance(childOfDeletedNode, parentOfDeletedNode);
         }
         return true;
@@ -195,10 +200,10 @@ class RedBlackTree<K, V> {
         }
 
         RedBlackTreeNode<K, V> doubleBlackNodeSibling = doubleBlackNodeParent.left == doubleBlackNode ? doubleBlackNodeParent.right : doubleBlackNodeParent.left;
-        RedBlackTreeNode<K, V> doubleBlackNodeSiblingLeft = doubleBlackNodeSibling.left;
-        RedBlackTreeNode<K, V> doubleBlackNodeSiblingRight = doubleBlackNodeSibling.right;
+        RedBlackTreeNode<K, V> doubleBlackNodeSiblingLeft = doubleBlackNodeSibling != null? doubleBlackNodeSibling.left : null;
+        RedBlackTreeNode<K, V> doubleBlackNodeSiblingRight = doubleBlackNodeSibling != null ? doubleBlackNodeSibling.right : null;
 
-        System.out.println(doubleBlackNodeSibling.key);
+        // System.out.println(doubleBlackNodeSibling.key);
 
         // Case-2
         if(isRedNode(doubleBlackNodeSibling)) {
@@ -219,7 +224,9 @@ class RedBlackTree<K, V> {
         if(isBlackNode(doubleBlackNodeParent) && isBlackNode(doubleBlackNodeSibling) &&
                 isBlackNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
             // System.out.println("Case-3");
-            doubleBlackNodeSibling.nodeColor = NodeColor.RED;
+            if(doubleBlackNodeSibling != null) {
+                doubleBlackNodeSibling.nodeColor = NodeColor.RED;
+            }
             reBalance(doubleBlackNodeParent, doubleBlackNodeParent.parent);
             return;
         }
@@ -228,19 +235,22 @@ class RedBlackTree<K, V> {
         if(isRedNode(doubleBlackNodeParent) && isBlackNode(doubleBlackNodeSibling) &&
                 isBlackNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
             // System.out.println("Case-4: " + doubleBlackNodeSibling.key);
-            doubleBlackNodeSibling.nodeColor = NodeColor.RED;
+            if(doubleBlackNodeSibling != null) {
+                doubleBlackNodeSibling.nodeColor = NodeColor.RED;
+            }
+
             doubleBlackNodeParent.nodeColor = NodeColor.BLACK;
             return;
         }
 
         // Case-5
         if(isBlackNode(doubleBlackNodeParent)) {
-            if(doubleBlackNodeParent.left == doubleBlackNode && isRedNode(doubleBlackNodeSiblingRight) && isBlackNode(doubleBlackNodeSiblingLeft)) {
+            if(doubleBlackNodeParent.left == doubleBlackNode && isRedNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
                 // System.out.println("Case-5 L");
                 LLShift(doubleBlackNodeSiblingLeft);
                 reBalance(doubleBlackNode, doubleBlackNodeParent);
                 return;
-            } else if(doubleBlackNodeParent.right == doubleBlackNode && isRedNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
+            } else if(doubleBlackNodeParent.right == doubleBlackNode && isRedNode(doubleBlackNodeSiblingRight) && isBlackNode(doubleBlackNodeSiblingLeft)) {
                 // System.out.println("Case-5 R");
                 RRShift(doubleBlackNodeSiblingRight);
                 reBalance(doubleBlackNode, doubleBlackNodeParent);
@@ -262,7 +272,8 @@ class RedBlackTree<K, V> {
     }
 
     V searchElement(K key) {
-        return findElement(head, key).value;
+        RedBlackTreeNode<K, V> element = findElement(head, key);
+        return element == null ? null : element.value;
     }
 
     List<V> getElementsBetweenRange(K key1, K key2) {
@@ -281,11 +292,11 @@ class RedBlackTree<K, V> {
             getElementsBetweenRange(head.right, key1, key2, elements);
             return;
         }
-        if(comparator.compare(head.key, key1) >= 0) {
+        if(comparator.compare(head.key, key1) <= 0) {
             getElementsBetweenRange(head.right, key1, key2, elements);
             return;
         }
-        if(comparator.compare(head.key, key2) <= 0) {
+        if(comparator.compare(head.key, key2) >= 0) {
             getElementsBetweenRange(head.left, key1, key2, elements);
         }
     }

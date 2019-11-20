@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class risingCity {
     public static void main(String[] args) throws FileNotFoundException {
+        long startTime = System.nanoTime();
 
         CityDevelopment newCity = new CityDevelopment();
 
@@ -28,16 +29,16 @@ public class risingCity {
             if(actionParts[0].equals("Insert")) {
                 numbers[1] = numbers[1].substring(0, numbers[1].length()-1);
                 // System.out.println(startingTime + ":" + "Insert - " + Integer.parseInt(numbers[0]) + ", " + Integer.parseInt(numbers[1]));
-                newCity.addPlan(new InsertPlan(startingTime, Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
+                newCity.addInsertPlan(new InsertPlan(startingTime, Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
             } else if(actionParts[0].equals("PrintBuilding")) {
                 if (numbers.length == 1) {
                     numbers[0] = numbers[0].substring(0, numbers[0].length()-1);
                     // System.out.println(startingTime + ":" + "PrintPlan - " + Integer.parseInt(numbers[0]));
-                    newCity.addPlan(new PrintPlan(startingTime, Integer.parseInt(numbers[0])));
+                    newCity.addPrintPlan(new PrintPlan(startingTime, Integer.parseInt(numbers[0])));
                 } else {
                     numbers[1] = numbers[1].substring(0, numbers[1].length()-1);
                     // System.out.println(startingTime + ":" + "PrintRangePlan - " + Integer.parseInt(numbers[0]) + ", " + Integer.parseInt(numbers[1]));
-                    newCity.addPlan(new PrintRangePlan(startingTime, Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
+                    newCity.addPrintPlan(new PrintRangePlan(startingTime, Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
                 }
             }
         }
@@ -45,6 +46,7 @@ public class risingCity {
         while(!newCity.developmentDone()) {
             newCity.incrementCounter();
         }
-        System.out.print(newCity.getGlobalTimeCounter());
+        long endTime   = System.nanoTime();
+        long totalTime = endTime - startTime;
     }
 }
