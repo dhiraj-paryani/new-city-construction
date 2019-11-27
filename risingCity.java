@@ -48,5 +48,6 @@ public class risingCity {
         }
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
+        System.out.println(totalTime);
     }
 }

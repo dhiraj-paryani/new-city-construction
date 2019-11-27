@@ -147,7 +147,7 @@ class RedBlackTree<K, V> {
             return;
         }
         printInOrder(head.left);
-        System.out.print(head.key + ":" + head.nodeColor + " ");
+        System.out.println(head.key + ":" + head.nodeColor + " ");
         printInOrder(head.right);
     }
 
@@ -160,6 +160,7 @@ class RedBlackTree<K, V> {
         if(degreeOfNodeToBeDeleted == 2) {
             RedBlackTreeNode<K, V> inOrderSuccessor = findInOrderSuccessor(nodeToBeDeleted);
             nodeToBeDeleted.key = inOrderSuccessor.key;
+            nodeToBeDeleted.value = inOrderSuccessor.value;
             nodeToBeDeleted = inOrderSuccessor;
         }
 
@@ -205,8 +206,22 @@ class RedBlackTree<K, V> {
 
         // System.out.println(doubleBlackNodeSibling.key);
 
+        // Rahul ka case
+        /* if(doubleBlackNodeParent.left == doubleBlackNode && isBlackNode(doubleBlackNodeSibling) &&
+                isRedNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
+            LLShift(doubleBlackNodeSibling);
+            RRShift(doubleBlackNodeSiblingLeft);
+            doubleBlackNodeSibling.nodeColor =  NodeColor.BLACK;
+        }
+        if(doubleBlackNodeParent.right == doubleBlackNode && isBlackNode(doubleBlackNodeSibling) &&
+                isBlackNode(doubleBlackNodeSiblingLeft) && isRedNode(doubleBlackNodeSiblingRight)) {
+            RRShift(doubleBlackNodeSibling);
+            LLShift(doubleBlackNodeSiblingRight);
+            doubleBlackNodeSibling.nodeColor =  NodeColor.BLACK;
+        } */
         // Case-2
-        if(isRedNode(doubleBlackNodeSibling)) {
+        if(isBlackNode(doubleBlackNodeParent) && isRedNode(doubleBlackNodeSibling) &&
+                isBlackNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
             if(doubleBlackNodeParent.left == doubleBlackNode) {
                 // System.out.println("case-2 L");
                 RRShift(doubleBlackNodeSibling);
@@ -214,8 +229,6 @@ class RedBlackTree<K, V> {
                 // System.out.println("case-2 R");
                 LLShift(doubleBlackNodeSibling);
             }
-            doubleBlackNodeSibling.nodeColor = NodeColor.BLACK;
-            doubleBlackNodeParent.nodeColor = NodeColor.RED;
             reBalance(doubleBlackNodeSibling, doubleBlackNodeSibling.parent);
             return;
         }
@@ -238,7 +251,6 @@ class RedBlackTree<K, V> {
             if(doubleBlackNodeSibling != null) {
                 doubleBlackNodeSibling.nodeColor = NodeColor.RED;
             }
-
             doubleBlackNodeParent.nodeColor = NodeColor.BLACK;
             return;
         }

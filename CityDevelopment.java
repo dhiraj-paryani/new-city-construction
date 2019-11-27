@@ -32,6 +32,13 @@ class CityDevelopment {
     void incrementCounter() {
         ++globalTimeCounter;
         addInsertPlanToCurrentBuilding();
+        printPlansToOuputFile();
+        if(currentBuilding != null && currentBuilding.getExecutedTime() == currentBuilding.getTotalTime()) {
+            System.out.println("("+ currentBuilding.getBuildingNumber() + "," + (globalTimeCounter) + ")");
+            redBlackTree.deleteElement(currentBuilding.getBuildingNumber());
+            currentBuildingDevelopment = 0;
+            currentBuilding = null;
+        }
         if(currentBuilding != null && currentBuildingDevelopment == 5) {
             currentBuildingDevelopment = 0;
             minHeap.addElement(currentBuilding);
@@ -44,12 +51,6 @@ class CityDevelopment {
         if(currentBuilding != null) {
             currentBuildingDevelopment++;
             currentBuilding.setExecutedTime(currentBuilding.getExecutedTime()+1);
-        }
-        printPlansToOuputFile();
-        if(currentBuilding != null && currentBuilding.getExecutedTime() == currentBuilding.getTotalTime()) {
-            System.out.println("("+ currentBuilding.getBuildingNumber() + "," + (globalTimeCounter+1) + ")");
-            redBlackTree.deleteElement(currentBuilding.getBuildingNumber());
-            currentBuilding = null;
         }
     }
 
