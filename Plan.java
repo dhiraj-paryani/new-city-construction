@@ -1,7 +1,13 @@
+/*
+ * PlanType enum to represent type of the input operation.
+ */
 enum PlanType {
     INSERT, PRINT, PRINT_RANGE
 }
 
+/*
+ * Plan class to store input instructions according to the PlanType.
+ */
 public class Plan {
     private int startingTime;
     private PlanType planType;
@@ -20,6 +26,9 @@ public class Plan {
     }
 }
 
+/*
+ * InsertPlan class to store input instructions of type Insert.
+ */
 class InsertPlan extends Plan {
     private int buildingNumber;
     private int totalTime;
@@ -39,6 +48,10 @@ class InsertPlan extends Plan {
     }
 }
 
+/*
+ * PrintPlan class to store input instructions of type PrintBuilding operation with single argument.
+ * This is equivalent to Print one building operation.
+ */
 class PrintPlan extends Plan {
     private int buildingNumber;
 
@@ -52,6 +65,10 @@ class PrintPlan extends Plan {
     }
 }
 
+/*
+ * PrintPlan class to store input instructions of type PrintBuilding operation with two arguments.
+ * This is equivalent to Print buildings between range of Building Numbers.
+ */
 class PrintRangePlan extends Plan {
     private int buildingNumber1;
     private int buildingNumber2;

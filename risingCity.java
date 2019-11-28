@@ -3,10 +3,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
+/*
+ * Main class with the main method, which will execute the development of the city.
+ */
 public class risingCity {
     public static void main(String[] args) throws FileNotFoundException {
-        long startTime = System.nanoTime();
-
         CityDevelopment newCity = new CityDevelopment();
 
         String filePath = new File("").getAbsolutePath();
@@ -18,6 +19,9 @@ public class risingCity {
         PrintStream outputFile = new PrintStream(new File("output_file.txt"));
         System.setOut(outputFile);
 
+        /*
+         * Parse the input and add the input instruction plan to the city.
+         */
         while (sc.hasNext()) {
             String nextInput = sc.nextLine();
             nextInput = nextInput.trim();
@@ -43,11 +47,11 @@ public class risingCity {
             }
         }
 
+        /*
+         * While city is not developed. Increment the global counter.
+         */
         while(!newCity.developmentDone()) {
             newCity.incrementCounter();
         }
-        long endTime   = System.nanoTime();
-        long totalTime = endTime - startTime;
-        System.out.println(totalTime);
     }
 }

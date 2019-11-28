@@ -1,27 +1,14 @@
 import java.util.Comparator;
 
+/**
+ * Building class (model) which has Building Number, Executed Time and Total Time.
+ */
 class Building {
     private int buildingNumber;
     private int executedTime;
     private int totalTime;
 
-    int getBuildingNumber() {
-        return buildingNumber;
-    }
-
-    void setExecutedTime(int executedTime) {
-        this.executedTime = executedTime;
-    }
-
-    int getExecutedTime() {
-        return executedTime;
-    }
-
-    int getTotalTime() {
-        return totalTime;
-    }
-
-    Building(int buildingNumber, int totalTime) {
+    public Building(int buildingNumber, int totalTime) {
         this(buildingNumber, 0, totalTime);
     }
 
@@ -30,9 +17,28 @@ class Building {
         this.executedTime = executedTime;
         this.totalTime = totalTime;
     }
+
+    public int getBuildingNumber() {
+        return buildingNumber;
+    }
+
+    public int getExecutedTime() {
+        return executedTime;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
+    }
+
+    public void setExecutedTime(int executedTime) {
+        this.executedTime = executedTime;
+    }
 }
 
-class ExecutionTimeComparator implements Comparator<Building> {
+/**
+ * Comparator for heap. First check excuted time of the buildings if equal check building number.
+ */
+class NextConstructionComparator implements Comparator<Building> {
     @Override
     public int compare(Building b1, Building b2) {
         int executedTimeDiff = b2.getExecutedTime() - b1.getExecutedTime();

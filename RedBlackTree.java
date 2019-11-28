@@ -1,5 +1,9 @@
 import java.util.*;
 
+/*
+ * Red Black tree implementation which accepts generic type of key and value.
+ * It also accepts comparator with which red-black tree do comparisons
+ */
 class RedBlackTree<K, V> {
     RedBlackTreeNode<K, V> head;
     private Comparator<? super K> comparator;
@@ -8,12 +12,15 @@ class RedBlackTree<K, V> {
         this.comparator = comparator;
     }
 
-    boolean addElement(K key, V value) {
+    /*
+     * Red black tree insertion logic. This method handles all the 4 cases of insertion.
+     */
+    public boolean addElement(K key, V value) {
         RedBlackTreeNode<K, V> node = new RedBlackTreeNode<>(key, value);
 
 
         if(head == null) {
-            node.setNodeColor(NodeColor.BLACK);
+            node.nodeColor = NodeColor.BLACK;
             head = node;
         } else {
             RedBlackTreeNode<K, V> current = head;
@@ -44,7 +51,7 @@ class RedBlackTree<K, V> {
     private void setUpTreeAfterInsert(RedBlackTreeNode<K, V> node) {
         RedBlackTreeNode<K, V> parent = node.parent;
 
-        if(NodeColor.RED.equals(node.getNodeColor()) && NodeColor.RED.equals(parent.getNodeColor())) {
+        if(NodeColor.RED.equals(node.nodeColor) && NodeColor.RED.equals(parent.nodeColor)) {
 
 
             RedBlackTreeNode<K, V> grandParent = node.parent.parent;
@@ -57,10 +64,10 @@ class RedBlackTree<K, V> {
             }
 
             if(NodeColor.RED.equals(gpOtherChildColor)) {
-                grandParent.left.setNodeColor(NodeColor.BLACK);
+                grandParent.left.nodeColor = NodeColor.BLACK;
                 if(grandParent.right != null) grandParent.right.nodeColor = NodeColor.BLACK;
                 if(grandParent != head) {
-                    grandParent.setNodeColor(NodeColor.RED);
+                    grandParent.nodeColor = NodeColor.RED;
                     setUpTreeAfterInsert(grandParent);
                 }
             } else {
@@ -83,6 +90,9 @@ class RedBlackTree<K, V> {
         }
     }
 
+    /*
+     * LL shift on the tree w.r.t input node.
+     */
     private void LLShift(RedBlackTreeNode<K, V> node) {
         // System.out.println("LL Shift: " + node.key);
         RedBlackTreeNode<K, V> nodeRight = node.right;
@@ -109,6 +119,9 @@ class RedBlackTree<K, V> {
 
     }
 
+    /*
+     * RR shift on the tree w.r.t input node.
+     */
     private void RRShift(RedBlackTreeNode<K, V> node) {
         // System.out.println("RR Shift");
         RedBlackTreeNode<K, V> nodeLeft = node.left;
@@ -134,24 +147,11 @@ class RedBlackTree<K, V> {
         nodeParent.nodeColor = temp;
     }
 
-    void printInOrder() {
-        if(this.head == null) {
-            System.out.print("Head is null");
-        }
-        printInOrder(this.head);
-        System.out.println();
-    }
 
-    void printInOrder(RedBlackTreeNode<K, V> head) {
-        if(head == null) {
-            return;
-        }
-        printInOrder(head.left);
-        System.out.println(head.key + ":" + head.nodeColor + " ");
-        printInOrder(head.right);
-    }
-
-    boolean deleteElement(K element) {
+    /*
+     * Red black tree deletions logic.
+     */
+    public boolean deleteElement(K element) {
         RedBlackTreeNode<K, V> nodeToBeDeleted = findElement(head, element);
         if (nodeToBeDeleted == null) return false;
 
@@ -192,6 +192,9 @@ class RedBlackTree<K, V> {
         return true;
     }
 
+    /*
+     * This method reBalances the tree after deletion performing operations according to different cases.
+     */
     private void reBalance(RedBlackTreeNode<K, V> doubleBlackNode, RedBlackTreeNode<K, V> doubleBlackNodeParent) {
 
         // Case-1
@@ -205,20 +208,6 @@ class RedBlackTree<K, V> {
         RedBlackTreeNode<K, V> doubleBlackNodeSiblingRight = doubleBlackNodeSibling != null ? doubleBlackNodeSibling.right : null;
 
         // System.out.println(doubleBlackNodeSibling.key);
-
-        // Rahul ka case
-        /* if(doubleBlackNodeParent.left == doubleBlackNode && isBlackNode(doubleBlackNodeSibling) &&
-                isRedNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
-            LLShift(doubleBlackNodeSibling);
-            RRShift(doubleBlackNodeSiblingLeft);
-            doubleBlackNodeSibling.nodeColor =  NodeColor.BLACK;
-        }
-        if(doubleBlackNodeParent.right == doubleBlackNode && isBlackNode(doubleBlackNodeSibling) &&
-                isBlackNode(doubleBlackNodeSiblingLeft) && isRedNode(doubleBlackNodeSiblingRight)) {
-            RRShift(doubleBlackNodeSibling);
-            LLShift(doubleBlackNodeSiblingRight);
-            doubleBlackNodeSibling.nodeColor =  NodeColor.BLACK;
-        } */
         // Case-2
         if(isBlackNode(doubleBlackNodeParent) && isRedNode(doubleBlackNodeSibling) &&
                 isBlackNode(doubleBlackNodeSiblingLeft) && isBlackNode(doubleBlackNodeSiblingRight)) {
@@ -283,17 +272,20 @@ class RedBlackTree<K, V> {
 
     }
 
-    V searchElement(K key) {
+    public V searchElement(K key) {
         RedBlackTreeNode<K, V> element = findElement(head, key);
         return element == null ? null : element.value;
     }
 
-    List<V> getElementsBetweenRange(K key1, K key2) {
+    public List<V> getElementsBetweenRange(K key1, K key2) {
         List<V> elements = new ArrayList<>();
         getElementsBetweenRange(head, key1, key2, elements);
         return elements;
     }
 
+    /*
+     * This method adds the entries which are between key1 and key2 inclusive to the elements list.
+     */
     private void getElementsBetweenRange(RedBlackTreeNode<K, V> head, K key1, K key2, List<V> elements) {
         if(head == null) {
             return;

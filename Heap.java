@@ -1,34 +1,37 @@
 import java.util.Comparator;
 
+/*
+ * Heap implementation. Heap will work for any type of elements. Heap accepts comparator of that element type.
+ */
 public class Heap<T> {
     private T[] arrayHeap;
     Comparator<? super T> comparator;
     public int length;
-
-
-    private static final int DefaultSize = 2000;
+    private static final int DEFAULT_SIZE = 2000;
 
     public Heap(Comparator<? super T> comparator) {
-        this(DefaultSize, comparator);
+        this(DEFAULT_SIZE, comparator);
     }
 
-    public Heap(int size, Comparator<? super T> comparator) {
+    private Heap(int size, Comparator<? super T> comparator) {
         this.comparator = comparator;
         this.length = 0;
 
         arrayHeap = (T[]) new Object[size];
     }
 
+    /*
+     * Add element to the heap.
+     * It will add element to the end of the tree and then calls  heapifyBottomUp method.
+     */
     public void addElement(T elementToAdd) {
         arrayHeap[++length] = elementToAdd;
         heapifyBottomUp(length);
     }
 
-    public void decreaseKey(int index, T newElement) {
-        arrayHeap[index] = newElement;
-        heapifyBottomUp(index);
-    }
-
+    /*
+     * This returns the minimum element of the heap i.e the first value of the heap.
+     */
     public T peek() {
         if(length < 1) {
             return null;
@@ -37,6 +40,11 @@ public class Heap<T> {
         }
     }
 
+    /*
+     * Return and remove the minimum element of the heap.
+     * It will return the first element of the heap and replaces that first element with the last element,
+     * after which it calls heapifyTopDown.
+     */
     public T poll() {
         if(length < 1) {
             return null;
@@ -51,8 +59,11 @@ public class Heap<T> {
         return arrayHeap[length+1];
     }
 
+    /*
+     * It Heapifies the heap elements,
+     * by recuresively comparing given node with left child and right child and doing swaps if applicable.
+     */
     private void heapifyTopDown(int index) {
-        // System.out.println(index);
         if(index >= length) return;
         T leftChild = index*2 <= length ? arrayHeap[index*2]: null;
         T rightChild = index*2 + 1 <= length ? arrayHeap[index*2 + 1]: null;
@@ -73,6 +84,9 @@ public class Heap<T> {
         }
     }
 
+    /*
+     * It Heapifies the heap elements bottom up by comparing node value with the parent recursively and doing swap if applicable.
+     */
     private void heapifyBottomUp(int index) {
         boolean swapped = true;
         while(swapped && index > 1) {
@@ -92,12 +106,4 @@ public class Heap<T> {
         arrayHeap[index1] = arrayHeap[index2];
         arrayHeap[index2] = temp;
     }
-
-    public void printHeap() {
-        for(int i=1; i<=length; i++) {
-            System.out.print(arrayHeap[i] + " ");
-        }
-        System.out.println();
-    }
-
 }

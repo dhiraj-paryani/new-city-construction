@@ -1,11 +1,11 @@
 public class RedBlackTreeNode<K, V> {
-    K key;
-    V value;
-    NodeColor nodeColor;
+    public K key;
+    public V value;
+    public NodeColor nodeColor;
 
-    RedBlackTreeNode<K, V> parent;
-    RedBlackTreeNode<K, V> left;
-    RedBlackTreeNode<K, V> right;
+    public RedBlackTreeNode<K, V> parent;
+    public RedBlackTreeNode<K, V> left;
+    public RedBlackTreeNode<K, V> right;
 
     RedBlackTreeNode(K key, V value) {
         this.key = key;

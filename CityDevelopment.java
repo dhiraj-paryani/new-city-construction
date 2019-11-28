@@ -1,6 +1,10 @@
 import java.util.LinkedList;
 import java.util.List;
 
+/*
+ * CityDevelopment class which will develop one city and
+ * take care of all the building parameters and development conditions
+ */
 class CityDevelopment {
     private Heap<Building> minHeap;
     private RedBlackTree<Integer, Building> redBlackTree;
@@ -8,28 +12,33 @@ class CityDevelopment {
     private LinkedList<Plan> printPlans;
     private Building currentBuilding;
     private int globalTimeCounter = -1;
-    private int currentBuildingDevelopment = 5;
+    private int currentBuildingDevelopment = 0;
 
-    public int getGlobalTimeCounter() {
-        return globalTimeCounter;
-    }
-
-    CityDevelopment() {
-        minHeap = new Heap<>(new ExecutionTimeComparator());
+    public CityDevelopment() {
+        minHeap = new Heap<>(new NextConstructionComparator());
         redBlackTree = new RedBlackTree<>((a,b)-> a-b);
         insertPlans = new LinkedList<>();
         printPlans = new LinkedList<>();
     }
 
-    void addInsertPlan(Plan plan) {
+    /*
+     * Add insert plan to insert the input type of insert.
+     */
+    public void addInsertPlan(Plan plan) {
         insertPlans.add(plan);
     }
 
-    void addPrintPlan(Plan plan) {
+    /*
+     * Add insert plan to insert the input type of PrintBuilding.
+     */
+    public void addPrintPlan(Plan plan) {
         printPlans.add(plan);
     }
 
-    void incrementCounter() {
+    /*
+     * Following mehtod will increment the counter and run the development of relevant building.
+     */
+    public void incrementCounter() {
         ++globalTimeCounter;
         addInsertPlanToCurrentBuilding();
         printPlansToOuputFile();
@@ -54,7 +63,7 @@ class CityDevelopment {
         }
     }
 
-    void addInsertPlanToCurrentBuilding() {
+    private void addInsertPlanToCurrentBuilding() {
         if(insertPlans.size() > 0) {
             Plan firstPlan = insertPlans.peekFirst();
             if(firstPlan.getStartingTime() == globalTimeCounter) {
@@ -64,7 +73,7 @@ class CityDevelopment {
         }
     }
 
-    void printPlansToOuputFile() {
+    private void printPlansToOuputFile() {
         // System.out.println("printPlansToOuputFile called" + globalTimeCounter);
         if(printPlans.size() > 0) {
             Plan firstPlan = printPlans.peekFirst();
@@ -122,7 +131,10 @@ class CityDevelopment {
         }
     }
 
-    boolean developmentDone() {
+    /*
+     * Return flag which represents city development is done or not.
+     */
+    public boolean developmentDone() {
             return insertPlans.size() == 0 && printPlans.size() == 0 && minHeap.length == 0 && redBlackTree.head == null && currentBuilding == null;
     }
 }
